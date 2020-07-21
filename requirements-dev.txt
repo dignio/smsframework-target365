@@ -5,3 +5,5 @@ j2cli
 flask
 smsframework
 freezegun
+target365-sdk
+responses

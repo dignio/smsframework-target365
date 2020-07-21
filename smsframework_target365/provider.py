@@ -1,5 +1,8 @@
 from smsframework import IProvider, exc
 from . import error
+import uuid
+from target365_sdk import ApiClient
+from target365_sdk.models.out_message import OutMessage
 
 try: # Py3
     from urllib.request import URLError, HTTPError
@@ -8,13 +11,19 @@ except ImportError: # Py2
 
 
 class Target365Provider(IProvider):
-    """ Target365 provider """
+    """ Target365 provider
+    Python SDK used - https://github.com/Target365/sdk-for-python/blob/master/USERGUIDE.md 
+    """
 
-    def __init__(self, gateway, name, **any_custom_provider_settings):
+    def __init__(self, gateway, name, base_url, key_name, private_key):
         """ Configure Target365 provider
+            :param base_url: Target365 base url str. example - "https://shared.target365.io/"
+            :param key_name: Api access key name
+            :param private_key: BASE64 encrypted secret key
         """
-        Custom code to configure provider
+        self.api_client = ApiClient(base_url, key_name, private_key)
         super(Target365Provider, self).__init__(gateway, name)
+
 
     def send(self, message):
         """ Send a message
@@ -22,10 +31,15 @@ class Target365Provider(IProvider):
             :type message: smsframework.data.OutgoingMessage.OutgoingMessage
             :rtype: OutgoingMessage
             """
-        
-        # Do not forget all possible exceptions
         try:
-            message.msgid = Custom code to send SMS
+            # Target365 SDK message
+            out_message = OutMessage()
+            out_message.transactionId = str(uuid.uuid4())
+            out_message.sender = message.src
+            out_message.recipient = '+' + message.dst
+            out_message.content = message.body
+            self.api_client.create_out_message(out_message)
+            message.msgid = out_message.transactionId
             return message
         except AssertionError as e:
             raise exc.RequestError(str(e))
@@ -33,8 +47,6 @@ class Target365Provider(IProvider):
             raise exc.MessageSendError(str(e))
         except URLError as e:
             raise exc.ConnectionError(str(e))
-        except CustomErrror as e:
-            raise error.Target365ProviderError(str(e))
 
     def make_receiver_blueprint(self):
         """ Create the receiver blueprint """

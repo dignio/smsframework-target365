@@ -5,5 +5,4 @@ class Target365ProviderError(ProviderError):
     """ Custom Target365 errors """
 
     def __init__(self, message=''):
-        Implement some custom errors or delete this stuff
         super(Target365ProviderError, self).__init__(message)
