@@ -43,8 +43,9 @@ class Target365ProviderTest(unittest.TestCase):
             return (201, headers, '')
         responses.add_callback(responses.POST, 'https://target365.api/api/out-messages',
             callback=send_callback)
-
-        message = gw.send(OutgoingMessage('+123456', 'hey', provider='main'))
+        
+        # For the target365 src is mandatory
+        message = gw.send(OutgoingMessage('+123456', 'hey', src='dignio', provider='main'))
         self.assertEqual(len(responses.calls), 1)
         self.assertTrue(message.msgid)
 

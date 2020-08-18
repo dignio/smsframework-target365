@@ -3,11 +3,7 @@ from . import error
 import uuid
 from target365_sdk import ApiClient
 from target365_sdk.models.out_message import OutMessage
-
-try: # Py3
-    from urllib.request import URLError, HTTPError
-except ImportError: # Py2
-    from urllib2 import URLError, HTTPError
+from requests.exceptions import HTTPError, ConnectionError
 
 
 class Target365Provider(IProvider):
@@ -35,6 +31,8 @@ class Target365Provider(IProvider):
             # Target365 SDK message
             out_message = OutMessage()
             out_message.transactionId = str(uuid.uuid4())
+            if message.src is None:
+                raise exc.RequestError('message.src is mandatory')
             out_message.sender = message.src
             out_message.recipient = '+' + message.dst
             out_message.content = message.body
@@ -45,7 +43,7 @@ class Target365Provider(IProvider):
             raise exc.RequestError(str(e))
         except HTTPError as e:
             raise exc.MessageSendError(str(e))
-        except URLError as e:
+        except ConnectionError as e:
             raise exc.ConnectionError(str(e))
 
     def make_receiver_blueprint(self):
