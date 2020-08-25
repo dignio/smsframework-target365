@@ -29,10 +29,9 @@ Initialization
 
     gateway = Gateway()
     gateway.add_provider('target365', Target365Provider,
-        user='kolypto',
-        password='123',
-        https=False,
-        use_prefix=True
+        base_url='https://shared.target365.io/',
+        key_name='YourKeyName',
+        private_key='SecretHex'
     )
 
 Config
@@ -40,10 +39,9 @@ Config
 
 Source: /smsframework_target365/provider.py
 
--  ``user: str``: Account username
--  ``password: str``: Account password
--  ``https: bool``: Use HTTPS for outgoing messages? Default: ``False``
--  ``use_prefix: bool``: Do you use prefixes for incoming messages?
+-  ``base_url: str``: target365 api base url
+-  ``key_name: str``: Key identifier on target365
+-  ``private_key: str``: hex number from ``openssl pkey -in mykey.pem -text`` see [Target365 SDK](https://github.com/Target365/sdk-for-python)
 
 Sending Parameters
 ==================
@@ -80,11 +78,3 @@ Go to Configuration > Connections, click 'Change'. Put the message
 receiver URL into "HTTP url" field.
 
 Message Receiver URL: ``<provider-name>/im``
-
-Status Receiver: /status
-------------------------
-
-Go to Configuration > Connections, click 'Change'. Put the message
-receiver URL into "HTTP Status url" field.
-
-Status Receiver URL: ``<provider-name>/status``
