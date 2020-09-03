@@ -6,7 +6,7 @@ from setuptools import setup, find_packages
 setup(
     # http://pythonhosted.org/setuptools/setuptools.html
     name='smsframework-target365',
-    version='0.0.1-0',
+    version='0.0.2-0',
     author='Ilya Vihtinsky',
     author_email='iliaviht@gmail.com',
 
