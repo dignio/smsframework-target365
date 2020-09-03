@@ -31,9 +31,10 @@ class Target365Provider(IProvider):
             # Target365 SDK message
             out_message = OutMessage()
             out_message.transactionId = str(uuid.uuid4())
-            if message.src is None:
-                raise exc.RequestError('message.src is mandatory')
-            out_message.sender = message.src
+            if message.src is None and message.provider_options.senderId is None:
+                raise exc.RequestError('message.src or message.provider_options.senderId is mandatory')
+
+            out_message.sender = message.provider_options.senderId or message.src
             out_message.recipient = '+' + message.dst
             out_message.content = message.body
             self.api_client.create_out_message(out_message)
